@@ -3,4 +3,4 @@ project(ttt)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(ttt main.cpp board.cpp board.hpp game.cpp game.hpp)
+add_executable(ttt main.cpp board.cpp board.hpp game.cpp game.hpp ai.cpp ai.hpp)

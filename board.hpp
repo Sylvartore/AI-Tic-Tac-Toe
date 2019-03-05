@@ -21,7 +21,7 @@ public:
         }
     }
 
-    void print() {
+    void print() const {
         cout << endl << "   1 2 3 " << endl;
         for (short row = 0; row < rows; row++) {
             cout << " " << (char) ('a' + row) << " ";
@@ -33,7 +33,7 @@ public:
         cout << endl;
     }
 
-    bool isValidMove(short row, short col) {
+    bool isValidMove(short row, short col) const {
         return state[row][col] == '+';
     }
 
@@ -42,7 +42,7 @@ public:
         else state[row][col] = 'X';
     }
 
-    short hasWinner() {
+    short hasWinner() const {
         bool draw = true;
         for (short row = 0; row < rows; row++) {
             for (short col = 0; col < rows; col++) {
@@ -58,23 +58,23 @@ public:
         return draw ? (short) 3 : (short) 0;
     }
 
-    bool check_col(short row, short col, char possible_winner) {
+    bool check_col(short row, short col, char possible_winner) const {
         if (row > 2 || col > 2) return true;
         return state[row][col] == possible_winner && check_col(row + (short) 1, col, state[row][col]);
     }
 
-    bool check_row(short row, short col, char possible_winner) {
+    bool check_row(short row, short col, char possible_winner) const {
         if (row > 2 || col > 2) return true;
         return state[row][col] == possible_winner && check_row(row, col + (short) 1, state[row][col]);
     }
 
 
-    bool check_dia_r(short row, short col, char possible_winner) {
+    bool check_dia_r(short row, short col, char possible_winner) const {
         if (row > 2 || col > 2) return true;
         return state[row][col] == possible_winner && check_dia_r(row + (short) 1, col + (short) 1, state[row][col]);
     }
 
-    bool check_dia_l(short row, short col, char possible_winner) {
+    bool check_dia_l(short row, short col, char possible_winner) const {
         if (row > 2 || col < 0) return true;
         return state[row][col] == possible_winner && check_dia_l(row + (short) 1, col - (short) 1, state[row][col]);
     }
