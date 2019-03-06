@@ -14,10 +14,10 @@ class game {
 public:
     game() {
         my_board = board{};
-        isPvP = getMode();
+        isPvP = select_mode();
         isTurnO = true;
         if (!isPvP) {
-            isPlayO = getSide();
+            isPlayO = select_side();
             my_ai = ai{!isPlayO};
         }
     }
@@ -49,15 +49,18 @@ private:
             auto start = chrono::high_resolution_clock::now();
             pair<short, short> move = my_ai.get_best_move_with_pruning(my_board);
             auto finish = std::chrono::high_resolution_clock::now();
-            double time1 = (double) ((chrono::duration_cast<chrono::nanoseconds>(finish - start)).count()) / 1000000;
-
-            start = chrono::high_resolution_clock::now();
-            my_ai.get_best_move_without_pruning(my_board);
-            finish = std::chrono::high_resolution_clock::now();
-            double time2 = (double) ((chrono::duration_cast<chrono::nanoseconds>(finish - start)).count()) / 1000000;
-
+            double time = (double) ((chrono::duration_cast<chrono::nanoseconds>(finish - start)).count()) / 1000000;
             cout << "AI moved at " << (char) (move.first + 'a') << (char) (move.second + '1') << ", took "
-                << time1 << "ms search with pruning, " << time2 << "ms search without pruning" << endl;
+                 << time << "ms search with pruning ";
+
+            if (board::rows == 3) {
+                start = chrono::high_resolution_clock::now();
+                my_ai.get_best_move_without_pruning(my_board);
+                finish = std::chrono::high_resolution_clock::now();
+                time = (double) ((chrono::duration_cast<chrono::nanoseconds>(finish - start)).count()) / 1000000;
+                cout << time << "ms search without pruning";
+            }
+            cout << endl;
             my_board.move(move.first, move.second, isTurnO);
         }
         isTurnO = !isTurnO;
@@ -88,7 +91,7 @@ private:
         else cout << "it's a draw!" << endl;
     }
 
-    bool getMode() const {
+    bool select_mode() const {
         int mode = 0;
         while (mode != 1 && mode != 2) {
             cout << "Please select mode: " << endl;
@@ -103,7 +106,7 @@ private:
         return mode == 1;
     }
 
-    bool getSide() const {
+    bool select_side() const {
         int mode = 0;
         while (mode != 1 && mode != 2) {
             cout << "Would you like to play O or X: " << endl;
