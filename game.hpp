@@ -6,6 +6,7 @@
 #define TTT_GAME_HPP
 
 #include <limits>
+#include <chrono>
 #include "board.hpp"
 #include "ai.hpp"
 
@@ -15,19 +16,18 @@ public:
         my_board = board{};
         isPvP = getMode();
         isTurnO = true;
-        isPlayO = true;
+        if (!isPvP) {
+            isPlayO = getSide();
+            my_ai = ai{!isPlayO};
+        }
     }
 
     void start() {
-        if (!isPvP) {
-            isPlayO = getSide();
-            my_ai = ai{};
-        }
         cout << "Game began!" << endl << endl;
         short winStatus = 0;
         while (winStatus == 0) {
             take_turns();
-            winStatus = my_board.hasWinner();
+            winStatus = my_board.terminal_test();
         }
         game_over(winStatus);
     }
@@ -37,7 +37,7 @@ private:
     bool isTurnO;
     bool isPvP;
     bool isPlayO;
-    ai my_ai;
+    ai my_ai{};
 
     void take_turns() {
         if (isPvP || (isPlayO && isTurnO) || (!isPlayO && !isTurnO)) {
@@ -46,7 +46,13 @@ private:
             pair<short, short> move = prompt_move();
             my_board.move(move.first, move.second, isTurnO);
         } else {
+            auto start = chrono::high_resolution_clock::now();
             pair<short, short> move = my_ai.get_best_move(my_board);
+            auto finish = std::chrono::high_resolution_clock::now();
+            cout << (char) (move.first + 'a') << (char) (move.second + '1') << endl;
+            std::cout << "AI moved, took "
+                      << (double) ((chrono::duration_cast<chrono::nanoseconds>(finish - start)).count()) / 1000000
+                      << "ms\n";
             my_board.move(move.first, move.second, isTurnO);
         }
         isTurnO = !isTurnO;

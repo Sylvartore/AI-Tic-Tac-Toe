@@ -6,6 +6,7 @@
 #define TTT_BOARD_HPP
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -42,7 +43,17 @@ public:
         else state[row][col] = 'X';
     }
 
-    short hasWinner() const {
+    vector<pair<short, short>> get_all_moves() const {
+        vector<pair<short, short>> all_moves;
+        for (short row = 0; row < board::rows; row++) {
+            for (short col = 0; col < board::rows; col++) {
+                if (isValidMove(row, col)) all_moves.emplace_back(row, col);
+            }
+        }
+        return all_moves;
+    }
+
+    short terminal_test() const {
         bool draw = true;
         for (short row = 0; row < rows; row++) {
             for (short col = 0; col < rows; col++) {
