@@ -47,12 +47,17 @@ private:
             my_board.move(move.first, move.second, isTurnO);
         } else {
             auto start = chrono::high_resolution_clock::now();
-            pair<short, short> move = my_ai.get_best_move(my_board);
+            pair<short, short> move = my_ai.get_best_move_with_pruning(my_board);
             auto finish = std::chrono::high_resolution_clock::now();
-            cout << (char) (move.first + 'a') << (char) (move.second + '1') << endl;
-            std::cout << "AI moved, took "
-                      << (double) ((chrono::duration_cast<chrono::nanoseconds>(finish - start)).count()) / 1000000
-                      << "ms\n";
+            double time1 = (double) ((chrono::duration_cast<chrono::nanoseconds>(finish - start)).count()) / 1000000;
+
+            start = chrono::high_resolution_clock::now();
+            my_ai.get_best_move_without_pruning(my_board);
+            finish = std::chrono::high_resolution_clock::now();
+            double time2 = (double) ((chrono::duration_cast<chrono::nanoseconds>(finish - start)).count()) / 1000000;
+
+            cout << "AI moved at " << (char) (move.first + 'a') << (char) (move.second + '1') << ", took "
+                << time1 << "ms search with pruning, " << time2 << "ms search without pruning" << endl;
             my_board.move(move.first, move.second, isTurnO);
         }
         isTurnO = !isTurnO;
